@@ -68,6 +68,7 @@ test.describe('記録', () => {
     await expect(page.locator('.chain-picker')).toHaveCount(0);
     await expect(page.locator('#sheet-root')).not.toContainText('何回ボールをつないだ');
     await expect(page.locator('.reason-btn')).toHaveCount(5);
+    await expect(page.locator('#app')).not.toContainText('つないだ回数');
   });
 
   test('得点を記録するとスコアと一覧が増え、紙吹雪が出る', async ({ page }) => {
