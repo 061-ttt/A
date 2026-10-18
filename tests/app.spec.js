@@ -184,6 +184,18 @@ test.describe('試合の管理', () => {
 });
 
 test.describe('分析', () => {
+  test('削除した「ふりかえりのヒント」「記録のしかた」「AIでヒントを深める」が出ない', async ({ page }) => {
+    await page.locator('[data-action="load-sample"]').click();
+    for (const id of ['record', 'chart', 'matches', 'settings']) {
+      await openTab(page, id);
+      const text = await page.locator('#app').innerText();
+      for (const removed of ['ふりかえりのヒント', '記録のしかた', 'AIでヒントを深める', 'AIの提案']) {
+        expect(text, `${id} の画面`).not.toContain(removed);
+      }
+    }
+    await expect(page.locator('[data-action="ai"]')).toHaveCount(0);
+  });
+
   test('強みと課題がそれぞれ50字以上の丁寧な文章で出る', async ({ page }) => {
     await page.locator('[data-action="load-sample"]').click();
     await openTab(page, 'chart');
@@ -214,22 +226,19 @@ test.describe('分析', () => {
     await expect(page.locator('.stat.teal')).not.toContainText('つないだ');
   });
 
-  test('次の作戦を保存すると記録画面に表示される', async ({ page }) => {
+  test('次の作戦を保存すると試合一覧に表示され、開き直しても残る', async ({ page }) => {
     await record(page, 'fault', 'connect');
     await openTab(page, 'chart');
     await page.locator('#goal-text').fill('声をかけて3回つなぐ');
     await page.locator('#goal-form button[type="submit"]').click();
     await expect(page.locator('#toast-root .toast')).toContainText('次の作戦を保存しました');
-    await openTab(page, 'record');
-    await expect(page.locator('.insight .prompt-box')).toContainText('声をかけて3回つなぐ');
+    await openTab(page, 'matches');
+    await expect(page.locator('.match-meta').first()).toContainText('作戦：声をかけて3回つなぐ');
+    await page.reload();
+    await openTab(page, 'chart');
+    await expect(page.locator('#goal-text')).toHaveValue('声をかけて3回つなぐ');
   });
 
-  test('AIのヒントを押すと、使えない環境では記録からのヒントが出る', async ({ page }) => {
-    await record(page, 'score', 'serve');
-    await openTab(page, 'chart');
-    await page.locator('[data-action="ai"]').click();
-    await expect(page.locator('#ai-result')).toContainText('記録からのヒント');
-  });
 });
 
 test.describe('設定と保存', () => {
