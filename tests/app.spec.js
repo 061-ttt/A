@@ -206,8 +206,24 @@ test.describe('分析', () => {
       expect(text).toMatch(/(です|ます|ました|ましょう)。$/);
       expect(text).not.toMatch(/だよ|だね|しよう[。！]/);
     }
-    expect(strength).toContain('「アタック」');
-    expect(challenge).toContain('「つなぎ」');
+    expect(strength).toContain('「アタックで得点」');
+    expect(challenge).toContain('「仲間にボールがつながらなかった」');
+    expect(challenge).toContain('次は、');
+  });
+
+  test('分析の文章に、記録のときに選んだ理由の言葉がそのまま使われる', async ({ page }) => {
+    await page.locator('.action-score').click();
+    const scoreLabel = (await page.locator('.reason-btn[data-id="placement"] > div').innerText()).trim();
+    await page.locator('.reason-btn[data-id="placement"]').click();
+    await expect(page.locator('#sheet-root .sheet')).toHaveCount(0);
+    await page.locator('.action-fault').click();
+    const faultLabel = (await page.locator('.reason-btn[data-id="receive"] > div').innerText()).trim();
+    await page.locator('.reason-btn[data-id="receive"]').click();
+    await expect(page.locator('#sheet-root .sheet')).toHaveCount(0);
+    await openTab(page, 'chart');
+    await expect(page.locator('.obs:not(.fault) .kid')).toContainText(`「${scoreLabel}」`);
+    await expect(page.locator('.obs.fault .kid')).toContainText(`「${faultLabel}」`);
+    await expect(page.locator('.insight-question')).toContainText(`「${faultLabel}」を減らすために`);
   });
 
   test('記録の少ない試合でも50字以上になる', async ({ page }) => {
