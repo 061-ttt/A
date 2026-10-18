@@ -3,7 +3,7 @@
 小学校のソフトバレーボールの授業で使う、試合の記録とふりかえりのアプリです。
 黒とグレーを基調にしたLiquid Glass風の画面で、得点・失点の理由を2タップで記録し、チームのよいところと次にがんばることを、小学6年生が読める丁寧な言葉で表示します。
 
-**アプリを開く:** https://061-ttt.github.io/volley-lens/
+**アプリを開く:** https://061-ttt.github.io/A/
 
 ## できること
 
@@ -31,7 +31,7 @@
 npm ci
 npx playwright install chromium
 npm test                                   # このフォルダを配信してテスト
-BASE_URL=https://061-ttt.github.io/volley-lens/ npm test   # 公開中のサイトをテスト
+BASE_URL=https://061-ttt.github.io/A/ npm test   # 公開中のサイトをテスト
 ```
 
 `main` に push すると、GitHub Actions がテストを実行し、すべて合格したときだけ GitHub Pages に公開します。公開後は、公開サイトに対しても同じテストを実行します。
